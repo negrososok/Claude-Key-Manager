@@ -1,0 +1,53 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AerolinkManager.Core", "src\AerolinkManager.Core\AerolinkManager.Core.csproj", "{36E4500D-8640-48C5-8D4A-30D073B1C1D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AerolinkManager.Wrapper", "src\AerolinkManager.Wrapper\AerolinkManager.Wrapper.csproj", "{707489F4-17F2-4D90-8477-1A669065B351}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AerolinkManager.App", "src\AerolinkManager.App\AerolinkManager.App.csproj", "{37AE96CB-1517-4FBA-B6DD-CC040DB1AD96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AerolinkManager.Tests", "tests\AerolinkManager.Tests\AerolinkManager.Tests.csproj", "{81433A5A-AFD6-45AA-AC16-EAF7CB4D412D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClaudeManager.Storage", "src\ClaudeManager.Storage\ClaudeManager.Storage.csproj", "{F746D43F-845E-4F7A-95B8-D565DE117D24}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{56A567E5-FF46-4CEA-9A01-A994C3421BF4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClaudeManager.Gateway", "src\ClaudeManager.Gateway\ClaudeManager.Gateway.csproj", "{598662DC-E10A-4172-A158-3CB2E7B6C7E2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{36E4500D-8640-48C5-8D4A-30D073B1C1D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36E4500D-8640-48C5-8D4A-30D073B1C1D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36E4500D-8640-48C5-8D4A-30D073B1C1D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36E4500D-8640-48C5-8D4A-30D073B1C1D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{707489F4-17F2-4D90-8477-1A669065B351}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{707489F4-17F2-4D90-8477-1A669065B351}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{707489F4-17F2-4D90-8477-1A669065B351}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{707489F4-17F2-4D90-8477-1A669065B351}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37AE96CB-1517-4FBA-B6DD-CC040DB1AD96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37AE96CB-1517-4FBA-B6DD-CC040DB1AD96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37AE96CB-1517-4FBA-B6DD-CC040DB1AD96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37AE96CB-1517-4FBA-B6DD-CC040DB1AD96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81433A5A-AFD6-45AA-AC16-EAF7CB4D412D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81433A5A-AFD6-45AA-AC16-EAF7CB4D412D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81433A5A-AFD6-45AA-AC16-EAF7CB4D412D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81433A5A-AFD6-45AA-AC16-EAF7CB4D412D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F746D43F-845E-4F7A-95B8-D565DE117D24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F746D43F-845E-4F7A-95B8-D565DE117D24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F746D43F-845E-4F7A-95B8-D565DE117D24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F746D43F-845E-4F7A-95B8-D565DE117D24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{598662DC-E10A-4172-A158-3CB2E7B6C7E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{598662DC-E10A-4172-A158-3CB2E7B6C7E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{598662DC-E10A-4172-A158-3CB2E7B6C7E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{598662DC-E10A-4172-A158-3CB2E7B6C7E2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{598662DC-E10A-4172-A158-3CB2E7B6C7E2} = {56A567E5-FF46-4CEA-9A01-A994C3421BF4}
+	EndGlobalSection
+EndGlobal

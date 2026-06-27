@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);NU1900</WarningsNotAsErrors>
+    <NuGetAudit>false</NuGetAudit>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+</Project>

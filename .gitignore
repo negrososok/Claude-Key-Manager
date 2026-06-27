@@ -98,3 +98,4 @@ MVP*.txt
 .codex/
 _stitch_extract/
 codex-clipboard-*.png
+scripts/add_*_strings.py

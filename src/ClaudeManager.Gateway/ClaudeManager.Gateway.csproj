@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>..\..\assets\ClaudeManager.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AerolinkManager.Core\AerolinkManager.Core.csproj" />
+    <ProjectReference Include="..\ClaudeManager.Storage\ClaudeManager.Storage.csproj" />
+  </ItemGroup>
+
+</Project>

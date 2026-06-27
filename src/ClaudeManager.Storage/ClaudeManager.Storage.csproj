@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <AssemblyName>ClaudeManager.Storage</AssemblyName>
+    <Product>Claude Manager Storage</Product>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.28" />
+    <ProjectReference Include="..\AerolinkManager.Core\AerolinkManager.Core.csproj" />
+  </ItemGroup>
+</Project>

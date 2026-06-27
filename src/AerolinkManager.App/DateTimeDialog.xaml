@@ -1,0 +1,13 @@
+<Window x:Class="AerolinkManager.App.DateTimeDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{DynamicResource ResetDialogTitle}" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <StackPanel Margin="20" Width="390">
+        <TextBlock Text="{DynamicResource ResetDateLabel}" />
+        <TextBox x:Name="ValueBox" Margin="0,6,0,16" Padding="8" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="{DynamicResource Cancel}" IsCancel="True" Margin="0,0,8,0" />
+            <Button Style="{StaticResource PrimaryButton}" Content="{DynamicResource Set}" IsDefault="True" Click="Set_Click" />
+        </StackPanel>
+    </StackPanel>
+</Window>

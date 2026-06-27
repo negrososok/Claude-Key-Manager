@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <AssemblyName>ClaudeManager.Wrapper</AssemblyName>
+    <Product>Claude Manager Wrapper</Product>
+    <ApplicationIcon>..\..\assets\ClaudeManager.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AerolinkManager.Core\AerolinkManager.Core.csproj" />
+  </ItemGroup>
+</Project>

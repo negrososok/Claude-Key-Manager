@@ -1,0 +1,976 @@
+<Window x:Class="AerolinkManager.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{DynamicResource AppTitle}" Height="780" Width="1180" MinHeight="640" MinWidth="960"
+        Closing="OnClosing" PreviewKeyDown="Window_PreviewKeyDown" WindowStartupLocation="CenterScreen" Icon="Assets/logo.png">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="56"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ═══ HEADER BAR ═══ -->
+        <Border Grid.Row="0" Background="{StaticResource HeaderBarBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+            <Grid Margin="280,0,28,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="TopPageTitle" Grid.Column="0" Text="{DynamicResource NavOverview}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextBrush}" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button Style="{StaticResource SecondaryButton}" Content="{DynamicResource OpenLogs}" Click="OpenLogs_Click" FontSize="13" Padding="12,6" Margin="0,0,8,0"/>
+                    <Button x:Name="TopGatewayButton" Style="{StaticResource PrimaryButton}" Content="{DynamicResource LaunchClaudeCodeBtn}" Click="LaunchPrimary_Click" FontSize="13" Padding="14,8" Margin="0,0,10,0"/>
+                    <ComboBox x:Name="LanguageCombo" Width="92" Height="34" FontSize="12" SelectionChanged="LanguageCombo_SelectionChanged" DisplayMemberPath="Display" SelectedValuePath="Code" Foreground="#17212B"/>
+                    <Border x:Name="ManagedPill" Visibility="Collapsed" CornerRadius="12" Padding="10,5" Margin="12,0,0,0">
+                        <TextBlock x:Name="ManagedStatusText" FontSize="12" FontWeight="SemiBold"/>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ═══ BODY: SIDEBAR + CONTENT ═══ -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- SIDEBAR -->
+            <Border Background="{StaticResource SidebarBrush}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Margin="0,22,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="20,0,16,28">
+                            <Border Width="40" Height="40" Background="{StaticResource PrimaryBrush}" CornerRadius="7" Margin="0,0,12,0">
+                                <Image Source="Assets/logo.png" Width="28" Height="28" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource AppTitle}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextBrush}" LineHeight="26"/>
+                                <TextBlock Text="{DynamicResource AppSubtitle}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource MutedTextBrush}" Margin="1,2,0,0" Width="166" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <Button Style="{StaticResource PrimaryButton}" Content="{DynamicResource AddProvider}" Click="AddProvider_Click" Margin="14,0,14,24" FontSize="15" Padding="18,10"/>
+                        <Button x:Name="NavOverview" Style="{StaticResource SidebarButton}" Click="Nav_Click" Tag="overview">
+                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="28"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Text="01" Style="{StaticResource SidebarIconText}"/><TextBlock Grid.Column="1" Text="{DynamicResource NavOverview}" VerticalAlignment="Center"/></Grid>
+                        </Button>
+                        <Button x:Name="NavProviders" Style="{StaticResource SidebarButton}" Click="Nav_Click" Tag="providers">
+                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="28"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Text="02" Style="{StaticResource SidebarIconText}"/><TextBlock Grid.Column="1" Text="{DynamicResource NavProviders}" VerticalAlignment="Center"/></Grid>
+                        </Button>
+                        <Button x:Name="NavGateway" Style="{StaticResource SidebarButton}" Click="Nav_Click" Tag="gateway">
+                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="28"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Text="03" Style="{StaticResource SidebarIconText}"/><TextBlock Grid.Column="1" Text="{DynamicResource NavGateway}" VerticalAlignment="Center"/></Grid>
+                        </Button>
+                        <Button x:Name="NavMonitoring" Style="{StaticResource SidebarButton}" Click="Nav_Click" Tag="monitoring">
+                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="28"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Text="04" Style="{StaticResource SidebarIconText}"/><TextBlock Grid.Column="1" Text="{DynamicResource NavMonitoring}" VerticalAlignment="Center"/></Grid>
+                        </Button>
+                        <Button x:Name="NavSettings" Style="{StaticResource SidebarButton}" Click="Nav_Click" Tag="settings">
+                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="28"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Text="05" Style="{StaticResource SidebarIconText}"/><TextBlock Grid.Column="1" Text="{DynamicResource NavSettings}" VerticalAlignment="Center"/></Grid>
+                        </Button>
+                        <Button x:Name="NavLaunch" Visibility="Collapsed" Style="{StaticResource SidebarButton}" Click="Nav_Click" Tag="launch"/>
+                        <Button x:Name="NavKeys" Visibility="Collapsed" Style="{StaticResource SidebarButton}" Click="Nav_Click" Tag="keys"/>
+                        <Button x:Name="NavProfiles" Visibility="Collapsed" Style="{StaticResource SidebarButton}" Click="Nav_Click" Tag="profiles"/>
+                    </StackPanel>
+
+                    <!-- Sidebar bottom status -->
+                    <Border Grid.Row="1" Background="#E4E9F0" Padding="14,12">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse x:Name="SidebarDot" Width="10" Height="10" Fill="#38A169" Margin="0,0,8,0"/>
+                                <TextBlock x:Name="SidebarText" Text="{DynamicResource SidebarReady}" FontSize="12" Foreground="{StaticResource SidebarTextBrush}"/>
+                            </StackPanel>
+                            <TextBlock x:Name="SidebarSubText" Text="{DynamicResource SidebarReadySub}" FontSize="10.5" Foreground="{StaticResource MutedTextBrush}" Margin="18,2,0,0" TextWrapping="Wrap"/>
+                            <Button x:Name="SidebarFinishBtn" Content="{DynamicResource FinishSetupBtn}" Click="SidebarFinish_Click" Style="{StaticResource SecondaryButton}" FontSize="11" Padding="10,4" MinHeight="26" HorizontalAlignment="Left" Margin="18,8,0,0" Visibility="Collapsed"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- CONTENT AREA -->
+            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" Background="{StaticResource AppBackgroundBrush}">
+                <Grid x:Name="ContentStack" Margin="30,28,30,28" MaxWidth="1200" HorizontalAlignment="Stretch">
+
+                    <!-- ═══ OVERVIEW ═══ -->
+                    <Grid x:Name="PageOverview" Visibility="Visible">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="340"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- A. Setup control center (top-left): 5-step checklist + ONE dynamic CTA -->
+                        <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource CardPanel}" Margin="0,0,10,12">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource SetupChecklistTitle}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,14"/>
+
+                                <!-- Step 1: Claude Code -->
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="26"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="StepClaudeMark" Text="○" FontSize="16" FontWeight="Bold" Foreground="#A0AEC0" VerticalAlignment="Top"/>
+                                    <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                        <TextBlock x:Name="StepClaudeTitle" FontWeight="SemiBold" FontSize="13"/>
+                                        <TextBlock x:Name="StepClaudeSub" Foreground="{StaticResource MutedTextBrush}" FontSize="11.5" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Grid>
+                                <!-- Step 2: Provider -->
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="26"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="StepProviderMark" Text="○" FontSize="16" FontWeight="Bold" Foreground="#A0AEC0" VerticalAlignment="Top"/>
+                                    <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                        <TextBlock x:Name="StepProviderTitle" FontWeight="SemiBold" FontSize="13"/>
+                                        <TextBlock x:Name="StepProviderSub" Foreground="{StaticResource MutedTextBrush}" FontSize="11.5" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Grid>
+                                <!-- Advanced key state is folded into the API connection step. -->
+                                <Grid x:Name="StepKeyRow" Margin="0,0,0,10" Visibility="Collapsed">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="26"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="StepKeyMark" Text="○" FontSize="16" FontWeight="Bold" Foreground="#A0AEC0" VerticalAlignment="Top"/>
+                                    <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                        <TextBlock x:Name="StepKeyTitle" FontWeight="SemiBold" FontSize="13"/>
+                                        <TextBlock x:Name="StepKeySub" Foreground="{StaticResource MutedTextBrush}" FontSize="11.5" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Grid>
+                                <!-- Step 4: Model -->
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="26"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="StepModelMark" Text="○" FontSize="16" FontWeight="Bold" Foreground="#A0AEC0" VerticalAlignment="Top"/>
+                                    <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                        <TextBlock x:Name="StepModelTitle" FontWeight="SemiBold" FontSize="13"/>
+                                        <TextBlock x:Name="StepModelSub" Foreground="{StaticResource MutedTextBrush}" FontSize="11.5" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Grid>
+                                <!-- Step 5: Managed command -->
+                                <Grid Margin="0,0,0,14">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="26"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="StepCommandMark" Text="○" FontSize="16" FontWeight="Bold" Foreground="#A0AEC0" VerticalAlignment="Top"/>
+                                    <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                        <TextBlock x:Name="StepCommandTitle" FontWeight="SemiBold" FontSize="13"/>
+                                        <TextBlock x:Name="StepCommandSub" Foreground="{StaticResource MutedTextBrush}" FontSize="11.5" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- ONE dynamic primary CTA + steps-remaining hint -->
+                                <StackPanel Orientation="Horizontal">
+                                    <Button x:Name="SetupPrimaryCta" Style="{StaticResource PrimaryButton}" Click="SetupPrimaryCta_Click" FontSize="14" Padding="20,10" MinHeight="40" Margin="0,0,12,0"/>
+                                    <TextBlock x:Name="StepsRemainingText" Foreground="{StaticResource MutedTextBrush}" FontSize="12" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- B. Current Status (top-right) -->
+                        <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource CardPanel}" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource CurrentStatusTitle}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                                <Grid Margin="0,0,0,7"><Grid.ColumnDefinitions><ColumnDefinition Width="135"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource RoutingModeLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" x:Name="StatusRoutingMode" FontWeight="SemiBold" FontSize="12.5" TextWrapping="Wrap"/></Grid>
+                                <Grid Margin="0,0,0,7"><Grid.ColumnDefinitions><ColumnDefinition Width="135"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource ActiveProfileLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" x:Name="StatusProfile" FontWeight="SemiBold" FontSize="12.5" TextWrapping="Wrap"/></Grid>
+                                <Grid Margin="0,0,0,7"><Grid.ColumnDefinitions><ColumnDefinition Width="135"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource AvailableKeysLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" x:Name="StatusKeys" FontWeight="SemiBold" FontSize="12.5"/></Grid>
+                                <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="135"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource GatewayModeLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" x:Name="StatusGateway" FontWeight="SemiBold" FontSize="12.5" TextWrapping="Wrap"/></Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- C. Recent Events (full-width row 1) -->
+                        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource CardPanel}" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource RecentEventsTitle}" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                                <ItemsControl x:Name="EventsList">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,0,0,7">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="12"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Ellipse Width="7" Height="7" Fill="{StaticResource StatusSuccessBrush}" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding}" Foreground="{StaticResource TextBrush}" FontSize="12.5" TextWrapping="Wrap" Margin="8,0,0,0"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- D. Claude Code Path (full-width row 2) -->
+                        <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource CardPanel}" Margin="0,0,0,12">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource ClaudePathLabel}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                    <TextBlock x:Name="ClaudePathText" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" FontSize="12.5" Margin="0,2,0,0"/>
+                                    <TextBlock x:Name="DashboardLastLaunchText" Foreground="{StaticResource MutedTextBrush}" FontSize="11.5" Margin="0,8,0,0"/>
+                                </StackPanel>
+                                <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="{DynamicResource ChoosePathBtn}" Click="RetryDetection_Click" FontSize="12" Padding="12,6" MinHeight="30" VerticalAlignment="Top" Margin="16,0,0,0"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- ═══ LAUNCH ═══ -->
+                    <StackPanel x:Name="PageLaunch" Visibility="Collapsed" MaxWidth="700">
+                        <!-- Page shell: title + description -->
+                        <TextBlock Text="{DynamicResource NavLaunch}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <TextBlock Text="{DynamicResource LaunchPageDesc}" Foreground="{StaticResource MutedTextBrush}" FontSize="13" Margin="0,0,0,16" TextWrapping="Wrap"/>
+
+                        <!-- Preview card -->
+                        <Border Style="{StaticResource CardPanel}" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource LaunchPreviewTitle}" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                                <Grid Margin="0,0,0,6"><Grid.ColumnDefinitions><ColumnDefinition Width="140"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource LaunchPresetLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12.5"/><TextBlock Grid.Column="1" x:Name="LaunchProfile" FontWeight="SemiBold" FontSize="12.5"/></Grid>
+                                <Grid Margin="0,0,0,6"><Grid.ColumnDefinitions><ColumnDefinition Width="140"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource ProviderLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12.5"/><TextBlock Grid.Column="1" x:Name="LaunchProvider" FontSize="12.5"/></Grid>
+                                <Grid Margin="0,0,0,6"><Grid.ColumnDefinitions><ColumnDefinition Width="140"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource NextSelectedKey}" Foreground="{StaticResource MutedTextBrush}" FontSize="12.5"/><TextBlock Grid.Column="1" x:Name="LaunchKey" FontSize="12.5"/></Grid>
+                                <Grid Margin="0,0,0,6"><Grid.ColumnDefinitions><ColumnDefinition Width="140"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource LaunchModelLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12.5"/><TextBlock Grid.Column="1" x:Name="LaunchModel" FontWeight="SemiBold" FontSize="12.5"/></Grid>
+                                <Grid Margin="0,0,0,6"><Grid.ColumnDefinitions><ColumnDefinition Width="140"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource LaunchModeLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12.5"/><TextBlock Grid.Column="1" x:Name="LaunchMode" FontSize="12.5"/></Grid>
+                                <Grid Margin="0,0,0,6"><Grid.ColumnDefinitions><ColumnDefinition Width="140"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource LaunchCommandLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12.5"/><TextBlock Grid.Column="1" x:Name="LaunchCommand" FontSize="12.5"/></Grid>
+                                <Grid Margin="0,0,0,6"><Grid.ColumnDefinitions><ColumnDefinition Width="140"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource LaunchFallbackLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12.5"/><TextBlock Grid.Column="1" x:Name="LaunchFallback" FontSize="12.5"/></Grid>
+                                <Grid Margin="0,0,0,6"><Grid.ColumnDefinitions><ColumnDefinition Width="140"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource LaunchCostGuardLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12.5"/><TextBlock Grid.Column="1" x:Name="LaunchCostGuard" FontSize="12.5"/></Grid>
+                                <Expander Header="{DynamicResource AdvancedLaunchSettings}" Margin="0,8,0,0" FontSize="12.5">
+                                    <StackPanel Margin="0,8,0,0">
+                                        <Grid Margin="0,0,0,6"><Grid.ColumnDefinitions><ColumnDefinition Width="140"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                            <TextBlock Text="{DynamicResource ModelSourceLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12.5"/><TextBlock Grid.Column="1" x:Name="LaunchModelSource" FontSize="12.5"/></Grid>
+                                        <Grid Margin="0,0,0,6"><Grid.ColumnDefinitions><ColumnDefinition Width="140"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                            <TextBlock Text="{DynamicResource LaunchModelModeLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12.5"/><TextBlock Grid.Column="1" x:Name="LaunchModelMode" FontSize="12.5"/></Grid>
+                                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="140"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                            <TextBlock Text="{DynamicResource LastLaunchLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12.5"/><TextBlock Grid.Column="1" x:Name="LaunchLastRun" FontSize="12.5"/></Grid>
+                                    </StackPanel>
+                                </Expander>
+                            </StackPanel>
+                        </Border>
+
+                        <Button x:Name="LaunchPrimaryButton" Style="{StaticResource PrimaryButton}" Content="{DynamicResource LaunchClaudeCodeBtn}" Click="LaunchPrimary_Click" HorizontalAlignment="Left" Padding="22,10" FontSize="14" Margin="0,0,0,10"/>
+                        <Expander Header="{DynamicResource AdvancedActions}" FontSize="12.5">
+                            <WrapPanel Margin="0,8,0,0">
+                                <Button Style="{StaticResource SecondaryButton}" Content="{DynamicResource ManageProfilesBtn}" Click="NavigateToProfiles" Margin="0,0,10,8"/>
+                                <Button Style="{StaticResource SecondaryButton}" Content="{DynamicResource CheckStatusBtn}" Click="TestGateway_Click" Margin="0,0,10,8"/>
+                            </WrapPanel>
+                        </Expander>
+                    </StackPanel>
+
+                    <!-- ═══ KEYS ═══ -->
+                    <Grid x:Name="PageKeys" Visibility="Collapsed" MaxWidth="900">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Page shell -->
+                        <TextBlock Grid.Row="0" Text="{DynamicResource NavKeys}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <TextBlock Grid.Row="1" Text="{DynamicResource KeysPageDesc}" Foreground="{StaticResource MutedTextBrush}" FontSize="13" Margin="0,0,0,12" TextWrapping="Wrap"/>
+
+                        <!-- Primary action row -->
+                        <WrapPanel Grid.Row="2" Margin="0,0,0,10">
+                            <Button Style="{StaticResource PrimaryButton}" Content="{DynamicResource AddKey}" Click="AddKey_Click" Margin="0,0,8,6"/>
+                            <Button Content="{DynamicResource EditSelected}" Click="EditKey_Click" Margin="0,0,8,6"/>
+                            <Button Content="{DynamicResource ToggleKey}" Click="ToggleKey_Click" Margin="0,0,8,6"/>
+                            <Button Content="{DynamicResource TestKey}" Click="TestKey_Click" Margin="0,0,8,6"/>
+                            <Button Foreground="#C53030" Content="{DynamicResource DeleteSelected}" Click="DeleteKey_Click" Margin="0,0,8,6"/>
+                        </WrapPanel>
+
+                        <!-- DataGrid -->
+                        <DataGrid Grid.Row="3" x:Name="KeysGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{DynamicResource NameColumn}" Binding="{Binding Name}" Width="1.3*"/><DataGridTextColumn Header="{DynamicResource ProviderColumn}" Binding="{Binding Provider}" Width="1.1*"/><DataGridTextColumn Header="{DynamicResource KeyColumn}" Binding="{Binding Mask}" Width="1.2*"/><DataGridTextColumn Header="{DynamicResource PriorityColumn}" Binding="{Binding Priority}" Width="0.6*"/><DataGridTextColumn Header="{DynamicResource StatusColumn}" Binding="{Binding Status}" Width="1.1*"/><DataGridTextColumn Header="{DynamicResource ResetColumn}" Binding="{Binding Reset}" Width="1.5*"/><DataGridTextColumn Header="{DynamicResource RunsColumn}" Binding="{Binding Runs}" Width="0.6*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <!-- Empty state (hidden when keys exist) -->
+                        <Border x:Name="EmptyKeysPanel" Grid.Row="3" Visibility="Collapsed" Style="{StaticResource CardPanel}" HorizontalAlignment="Center" MinWidth="400" Padding="40,30">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="🔑" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                                <TextBlock Text="{DynamicResource EmptyKeysTitle}" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                <TextBlock Text="{DynamicResource EmptyKeysSub}" Foreground="{StaticResource MutedTextBrush}" FontSize="13" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                                <Button Style="{StaticResource PrimaryButton}" Content="{DynamicResource AddKey}" Click="AddKey_Click" HorizontalAlignment="Center" Padding="20,10" FontSize="14"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Status management row -->
+                        <WrapPanel Grid.Row="4" Margin="0,10,0,0">
+                            <Button Content="{DynamicResource MarkFive}" Click="MarkFiveHour_Click" Margin="0,0,8,6"/><Button Content="{DynamicResource SetFiveReset}" Click="SetFiveHourReset_Click" Margin="0,0,8,6"/><Button Content="{DynamicResource MarkWeekly}" Click="MarkWeekly_Click" Margin="0,0,8,6"/><Button Content="{DynamicResource SetWeeklyReset}" Click="SetWeeklyReset_Click" Margin="0,0,8,6"/><Button Content="{DynamicResource ResetStatus}" Click="ResetStatus_Click" Margin="0,0,8,6"/>
+                        </WrapPanel>
+                    </Grid>
+
+                    <!-- ═══ PROVIDERS ═══ -->
+                    <Grid x:Name="PageProviders" Visibility="Collapsed" MaxWidth="1200">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="{DynamicResource NavProviders}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <TextBlock Grid.Row="1" Text="{DynamicResource ProvidersPageDesc}" Foreground="{StaticResource MutedTextBrush}" FontSize="13" Margin="0,0,0,12" TextWrapping="Wrap"/>
+
+                        <Grid Grid.Row="2" Margin="0,0,0,18">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="1" Style="{StaticResource PrimaryButton}" Content="{DynamicResource AddProvider}" Click="AddProvider_Click" Margin="0,0,0,0"/>
+                        </Grid>
+                        <WrapPanel Grid.Row="2" Margin="0,58,0,10" Visibility="Collapsed">
+                            <Button Content="{DynamicResource EditSelected}" Click="EditProvider_Click" Margin="0,0,8,6"/>
+                            <Button Content="{DynamicResource ToggleKey}" Click="ToggleProvider_Click" Margin="0,0,8,6"/>
+                            <Button Content="{DynamicResource ToggleDiscovery}" Click="ToggleDiscovery_Click" Margin="0,0,8,6"/>
+                            <Button Foreground="#C53030" Content="{DynamicResource DeleteSelected}" Click="DeleteProvider_Click" Margin="0,0,8,6"/>
+                        </WrapPanel>
+
+                        <ItemsControl Grid.Row="3" x:Name="ProvidersCards" ItemsSource="{Binding ElementName=ProvidersGrid, Path=ItemsSource}">
+                            <ItemsControl.ItemContainerStyle>
+                                <Style TargetType="ContentPresenter">
+                                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="White" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="18" Margin="0,0,0,12" HorizontalAlignment="Stretch">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                                    <TextBlock Text="{Binding Name}" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" VerticalAlignment="Center"/>
+                                                    <Border Background="#EDF4FF" CornerRadius="12" Padding="9,3" Margin="12,0,0,0" VerticalAlignment="Center">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Ellipse Width="7" Height="7" Fill="{Binding ReadinessBrush}" Margin="0,0,6,0"/>
+                                                            <TextBlock Text="{Binding Readiness}" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </StackPanel>
+                                                <TextBlock Text="{Binding TypeLabel}" FontSize="12.5" Foreground="{StaticResource MutedTextBrush}" Margin="0,0,0,10"/>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="96"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="{DynamicResource BaseUrlLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="1" Text="{Binding BaseUrl}" FontSize="13" Foreground="{StaticResource TextBrush}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                                                </Grid>
+                                                <Grid Margin="0,8,0,0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="96"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="{DynamicResource ProviderApiKeysLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="1" Text="{Binding KeyCountText}" FontSize="13" Foreground="{StaticResource TextBrush}" VerticalAlignment="Center"/>
+                                                </Grid>
+                                                <Grid Margin="0,10,0,0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="96"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="{DynamicResource LaunchModelLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center"/>
+                                                    <ComboBox Grid.Column="1"
+                                                              Width="290"
+                                                              HorizontalAlignment="Left"
+                                                              FontSize="12.5"
+                                                              ItemsSource="{Binding ModelChoices}"
+                                                              DisplayMemberPath="Display"
+                                                              SelectedValuePath="Value"
+                                                              SelectedValue="{Binding DefaultModelValue, Mode=OneWay}"
+                                                              SelectionChanged="ProviderCardDefaultModel_Changed"
+                                                              ToolTip="{DynamicResource ProviderDefaultModelHint}"/>
+                                                </Grid>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="22,0,0,0" Width="176">
+                                                <Button Style="{StaticResource PrimaryButton}" Content="{DynamicResource EditSelected}" Tag="{Binding Id}" Click="ProviderCardEdit_Click" FontSize="13" Padding="14,7" Margin="0,0,0,8" HorizontalAlignment="Stretch"/>
+                                                <Button Style="{StaticResource SecondaryButton}" Content="{DynamicResource ToggleKey}" Tag="{Binding Id}" Click="ProviderCardToggle_Click" FontSize="13" Padding="12,7" Margin="0,0,0,8" HorizontalAlignment="Stretch"/>
+                                                <Button Style="{StaticResource SecondaryButton}" Content="&#x00D7;" ToolTip="{DynamicResource DeleteSelected}" Tag="{Binding Id}" Click="ProviderCardDelete_Click" Width="34" MinHeight="32" FontSize="18" FontWeight="SemiBold" Foreground="#C53030" Padding="0" HorizontalAlignment="Right"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <DataGrid Grid.Row="3" x:Name="ProvidersGrid" Visibility="Collapsed" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False">
+                            <DataGrid.Columns><DataGridTextColumn Header="{DynamicResource NameColumn}" Binding="{Binding Name}" Width="1.2*"/><DataGridTextColumn Header="{DynamicResource TypeColumn}" Binding="{Binding TypeLabel}" Width="1.4*"/><DataGridTextColumn Header="{DynamicResource StatusColumn}" Binding="{Binding Readiness}" Width="1.2*"/><DataGridTextColumn Header="{DynamicResource BaseUrlLabel}" Binding="{Binding BaseUrl}" Width="1.8*"/><DataGridCheckBoxColumn Header="{DynamicResource EnabledColumn}" Binding="{Binding Enabled}" Width="0.7*"/><DataGridCheckBoxColumn Header="{DynamicResource DiscoveryColumn}" Binding="{Binding Discovery}" Width="0.8*"/></DataGrid.Columns>
+                        </DataGrid>
+
+                        <!-- Empty state -->
+                        <Border x:Name="EmptyProvidersPanel" Grid.Row="3" Visibility="Collapsed" Style="{StaticResource CardPanel}" HorizontalAlignment="Center" MinWidth="400" Padding="40,30">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="{DynamicResource EmptyProvidersTitle}" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                <TextBlock Text="{DynamicResource EmptyProvidersSub}" Foreground="{StaticResource MutedTextBrush}" FontSize="13" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                                <Button Style="{StaticResource PrimaryButton}" Content="{DynamicResource AddProvider}" Click="AddProvider_Click" HorizontalAlignment="Center" Padding="20,10" FontSize="14"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- ═══ PROFILES ═══ -->
+                    <Grid x:Name="PageProfiles" Visibility="Collapsed" MaxWidth="900">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="{DynamicResource NavProfiles}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <TextBlock Grid.Row="1" Text="{DynamicResource ProfilesPageDesc}" Foreground="{StaticResource MutedTextBrush}" FontSize="13" Margin="0,0,0,12" TextWrapping="Wrap"/>
+
+                        <WrapPanel Grid.Row="2" Margin="0,0,0,10">
+                            <Button Style="{StaticResource PrimaryButton}" Content="{DynamicResource AddProfile}" Click="AddProfile_Click" Margin="0,0,8,6"/>
+                            <Button Content="{DynamicResource EditSelected}" Click="EditProfile_Click" Margin="0,0,8,6"/>
+                            <Button Content="{DynamicResource SetDefault}" Click="SetDefaultProfile_Click" Margin="0,0,8,6"/>
+                            <Button Foreground="#C53030" Content="{DynamicResource DeleteSelected}" Click="DeleteProfile_Click" Margin="0,0,8,6"/>
+                        </WrapPanel>
+
+                        <DataGrid Grid.Row="3" x:Name="ProfilesGrid" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False">
+                            <DataGrid.Columns><DataGridTextColumn Header="{DynamicResource NameColumn}" Binding="{Binding Name}" Width="1.3*"/><DataGridTextColumn Header="{DynamicResource ProvidersTab}" Binding="{Binding Providers}" Width="1.4*"/><DataGridTextColumn Header="{DynamicResource StrategyLabel}" Binding="{Binding Strategy}" Width="1.2*"/><DataGridTextColumn Header="{DynamicResource ModelOverrideLabel}" Binding="{Binding Model}" Width="1.1*"/><DataGridTextColumn Header="{DynamicResource FallbackLabel}" Binding="{Binding Fallback}" Width="1*"/><DataGridCheckBoxColumn Header="{DynamicResource DefaultColumn}" Binding="{Binding IsDefault}" Width="0.7*"/></DataGrid.Columns>
+                        </DataGrid>
+
+                        <!-- Empty state -->
+                        <Border x:Name="EmptyProfilesPanel" Grid.Row="3" Visibility="Collapsed" Style="{StaticResource CardPanel}" HorizontalAlignment="Center" MinWidth="400" Padding="40,30">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="{DynamicResource EmptyProfilesTitle}" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                <TextBlock Text="{DynamicResource EmptyProfilesSub}" Foreground="{StaticResource MutedTextBrush}" FontSize="13" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                                <Button Style="{StaticResource PrimaryButton}" Content="{DynamicResource AddProfile}" Click="AddProfile_Click" HorizontalAlignment="Center" Padding="20,10" FontSize="14"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- ═══ GATEWAY ═══ -->
+                    <StackPanel x:Name="PageGateway" Visibility="Collapsed" MaxWidth="750">
+                        <TextBlock Text="{DynamicResource NavGateway}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <TextBlock Text="{DynamicResource GatewayPageDesc}" Foreground="{StaticResource MutedTextBrush}" FontSize="13" Margin="0,0,0,6" TextWrapping="Wrap"/>
+                        <TextBlock Text="{DynamicResource GatewayAdvancedNote}" Foreground="{StaticResource MutedTextBrush}" FontSize="11.5" FontStyle="Italic" Margin="0,0,0,16" TextWrapping="Wrap"/>
+
+                        <!-- Gateway identity card -->
+                        <Border Style="{StaticResource CardPanel}" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource RoutingModeHeading}" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                <TextBlock x:Name="DefaultModeNote" Foreground="{StaticResource MutedTextBrush}" FontSize="12.5" TextWrapping="Wrap" Text="{DynamicResource GatewayOnlyNote}"/>
+                                <RadioButton x:Name="LauncherModeRadio" Visibility="Collapsed" GroupName="RoutingMode" Content="{DynamicResource RoutingLauncher}" Checked="RoutingMode_Changed"/>
+                                <RadioButton x:Name="GatewayModeRadio" Visibility="Collapsed" GroupName="RoutingMode" Content="{DynamicResource RoutingGateway}" Checked="RoutingMode_Changed"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Gateway status card -->
+                        <Border Style="{StaticResource CardPanel}" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource GatewayStatusHeading}" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                                <Grid Margin="0,0,0,6"><Grid.ColumnDefinitions><ColumnDefinition Width="90"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource GatewayStatusLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12.5"/><TextBlock Grid.Column="1" x:Name="GatewayStatusValue" FontWeight="SemiBold" FontSize="12.5"/></Grid>
+                                <Grid Margin="0,0,0,6"><Grid.ColumnDefinitions><ColumnDefinition Width="90"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource GatewayUrlLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12.5"/><TextBlock Grid.Column="1" x:Name="GatewayUrlValue" FontSize="12.5"/></Grid>
+                                <Grid Margin="0,0,0,6"><Grid.ColumnDefinitions><ColumnDefinition Width="90"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource GatewayTokenLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12.5"/><TextBlock Grid.Column="1" x:Name="GatewayTokenValue" FontSize="12.5"/></Grid>
+                                <Grid Margin="0,0,0,10"><Grid.ColumnDefinitions><ColumnDefinition Width="90"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource GatewayPortLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12.5"/><TextBox Grid.Column="1" x:Name="GatewayPortBox" Width="80" HorizontalAlignment="Left" FontSize="12.5"/></Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Gateway controls -->
+                        <WrapPanel Margin="0,0,0,10">
+                            <Button Style="{StaticResource PrimaryButton}" Content="{DynamicResource SaveGatewaySettings}" Click="SaveGatewaySettings_Click" Margin="0,0,8,6"/>
+                            <Button Content="{DynamicResource TestGateway}" Click="TestGateway_Click" Margin="0,0,8,6"/>
+                            <Button Content="{DynamicResource RegenerateToken}" Click="RegenerateToken_Click" Margin="0,0,8,6"/>
+                        </WrapPanel>
+
+                        <!-- Warning -->
+                        <Border Background="#FEFCBF" CornerRadius="7" Padding="14" Margin="0,0,0,10">
+                            <TextBlock Text="{DynamicResource GatewayModeWarning}" Foreground="#744210" TextWrapping="Wrap" FontSize="12"/>
+                        </Border>
+
+                        <!-- Technical details (progressive disclosure) -->
+                        <Expander Header="{DynamicResource GatewayDetailsToggle}" FontWeight="SemiBold" FontSize="12.5" IsExpanded="False">
+                            <TextBlock Text="{DynamicResource GatewayTechNote}" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" FontSize="12" Margin="0,8,0,0"/>
+                        </Expander>
+                    </StackPanel>
+
+                    <!-- ═══ MONITORING ═══ -->
+                    <StackPanel x:Name="PageMonitoring" Visibility="Collapsed" MaxWidth="900">
+                        <TextBlock Text="{DynamicResource NavMonitoring}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <TextBlock Text="{DynamicResource MonitoringPageDesc}" Foreground="{StaticResource MutedTextBrush}" FontSize="13" Margin="0,0,0,16" TextWrapping="Wrap"/>
+
+                        <!-- Summary cards -->
+                        <UniformGrid Columns="3" Margin="0,0,0,12">
+                            <Border Style="{StaticResource CardPanel}" Margin="0,0,8,0">
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource RequestCountLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12"/><TextBlock x:Name="MonRequests" FontSize="24" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource CardPanel}" Margin="4,0,4,0">
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource SessionsTab}" Foreground="{StaticResource MutedTextBrush}" FontSize="12"/><TextBlock x:Name="MonSessions" FontSize="24" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource CardPanel}" Margin="8,0,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource EstimatedCostLabel}" Foreground="{StaticResource MutedTextBrush}" FontSize="12"/><TextBlock x:Name="MonCost" FontSize="24" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                                </StackPanel>
+                            </Border>
+                        </UniformGrid>
+
+                        <!-- Provider health + export -->
+                        <Border Style="{StaticResource CardPanel}" Margin="0,0,0,12">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{DynamicResource ProviderHealthLabel}" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                    <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="{DynamicResource ExportUsageCsv}" Click="ExportUsageCsv_Click" FontSize="12" Padding="12,6" MinHeight="30"/>
+                                </Grid>
+                                <DataGrid x:Name="MonProviderHealthGrid" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" HeadersVisibility="Column" MaxHeight="280">
+                                    <DataGrid.Columns><DataGridTextColumn Header="{DynamicResource ProviderColumn}" Binding="{Binding Provider}" Width="1.2*"/><DataGridTextColumn Header="{DynamicResource SuccessRateLabel}" Binding="{Binding SuccessRate}" Width="0.9*"/><DataGridTextColumn Header="P50" Binding="{Binding P50}" Width="0.7*"/><DataGridTextColumn Header="P95" Binding="{Binding P95}" Width="0.7*"/><DataGridTextColumn Header="{DynamicResource StatusColumn}" Binding="{Binding State}" Width="1*"/></DataGrid.Columns>
+                                </DataGrid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Events + sessions side-by-side -->
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Style="{StaticResource CardPanel}" Grid.Column="0" Margin="0,0,6,0">
+                                <StackPanel>
+                                    <Grid Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{DynamicResource EventsLabel}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="{DynamicResource Refresh}" Click="RefreshMonitoring_Click" FontSize="11" Padding="8,4" MinHeight="26"/>
+                                    </Grid>
+                                    <ItemsControl x:Name="MonEventsList">
+                                        <ItemsControl.ItemTemplate><DataTemplate><TextBlock Text="{Binding}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,5"/></DataTemplate></ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource CardPanel}" Grid.Column="1" Margin="6,0,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource RecentSessionsLabel}" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                    <ItemsControl x:Name="MonSessionsList">
+                                        <ItemsControl.ItemTemplate><DataTemplate><TextBlock Text="{Binding}" FontSize="11.5" TextWrapping="Wrap" Margin="0,0,0,4"/></DataTemplate></ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <!-- Empty state for monitoring -->
+                        <Border x:Name="EmptyMonitoringPanel" Visibility="Collapsed" Style="{StaticResource CardPanel}" HorizontalAlignment="Center" MinWidth="420" Padding="40,30">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="{DynamicResource EmptyMonitoringTitle}" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                <TextBlock Text="{DynamicResource EmptyMonitoringSub}" Foreground="{StaticResource MutedTextBrush}" FontSize="13" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- ═══ SETTINGS ═══ -->
+                    <StackPanel x:Name="PageSettings" Visibility="Collapsed" MaxWidth="750">
+                        <TextBlock Text="{DynamicResource NavSettings}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <TextBlock Text="{DynamicResource SettingsPageDesc}" Foreground="{StaticResource MutedTextBrush}" FontSize="13" Margin="0,0,0,16" TextWrapping="Wrap"/>
+
+                        <!-- Managed command card (secondary, not primary CTA) -->
+                        <Border Style="{StaticResource CardPanel}" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource ManagedCommandHeading}" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,4"/>
+                                <TextBlock x:Name="SettingsPathText" Margin="0,4,0,12" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" FontSize="12"/>
+                                <WrapPanel>
+                                    <Button x:Name="SettingsManagedButton" Style="{StaticResource SecondaryButton}" Content="{DynamicResource ManageCommandBtn}" Click="ManagedCommand_Click" Margin="0,0,8,6"/>
+                                    <Button Style="{StaticResource SecondaryButton}" Content="{DynamicResource RetryDetection}" Click="RetryDetection_Click" Margin="0,0,8,6"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Config card -->
+                        <Border Style="{StaticResource CardPanel}" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource ConfigTransferHeading}" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,4"/>
+                                <TextBlock Text="{DynamicResource ConfigTransferHelp}" Foreground="{StaticResource MutedTextBrush}" Margin="0,4,0,12" TextWrapping="Wrap" FontSize="12"/>
+                                <WrapPanel>
+                                    <Button Content="{DynamicResource ExportConfig}" Click="ExportConfig_Click" Margin="0,0,8,6"/>
+                                    <Button Content="{DynamicResource ImportConfig}" Click="ImportConfig_Click" Margin="0,0,8,6"/>
+                                    <Button Content="{DynamicResource ExportDiagnostics}" Click="ExportDiagnostics_Click" Margin="0,0,8,6"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- About card -->
+                        <Border Style="{StaticResource CardPanel}">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource AppDataLabel}" FontWeight="SemiBold" FontSize="15"/>
+                                <TextBlock x:Name="AppDataPathText" Margin="0,5,0,0" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" FontSize="12"/>
+                                <TextBlock x:Name="VersionText" Margin="0,12,0,0" FontSize="12"/>
+                                <TextBlock Text="{DynamicResource Disclaimer}" FontSize="12" Foreground="{StaticResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,6,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                </Grid>
+            </ScrollViewer>
+        </Grid>
+
+        <!-- ═══ FEEDBACK BAR ═══ -->
+        <Border Grid.Row="2" Background="{StaticResource PanelBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="16,10">
+            <TextBlock x:Name="FeedbackText" Foreground="{StaticResource MutedTextBrush}" Text="{DynamicResource Ready}" TextTrimming="CharacterEllipsis" FontSize="12"/>
+        </Border>
+
+        <!-- ═══ PROVIDER SETUP MODAL OVERLAY ═══ -->
+        <Grid x:Name="ProviderEditorOverlay" Grid.Row="0" Grid.RowSpan="3" Visibility="Collapsed" Panel.ZIndex="100">
+            <!-- Semi-transparent backdrop -->
+            <Border Background="#88182430" MouseDown="ProviderEditorBackdrop_Click"/>
+            <!-- Centered card -->
+            <Border Width="760" MaxHeight="820" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Background="{StaticResource PanelBrush}" CornerRadius="12"
+                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,20">
+                <Border.Effect><DropShadowEffect BlurRadius="24" ShadowDepth="3" Opacity="0.35" Color="#1A202C"/></Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Header -->
+                    <Grid Grid.Row="0" Margin="24,20,16,12">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <TextBlock x:Name="ProvEditTitle" Text="{DynamicResource ProviderModalTitle}" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <Button Grid.Column="1" Content="&#x00D7;" Click="ProviderEditorCancel_Click" Width="32" Height="32" FontSize="14"
+                                Background="Transparent" BorderThickness="0" Foreground="{StaticResource MutedTextBrush}" Cursor="Hand"/>
+                    </Grid>
+
+                    <!-- Scrollable form -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="24,0,24,0">
+                        <StackPanel>
+                            <!-- Provider ID -->
+                            <TextBlock Text="{DynamicResource ProviderIdLabel}" FontWeight="SemiBold" FontSize="12.5" Margin="0,0,0,3"/>
+                            <TextBox x:Name="ProvEditId" FontSize="13" TextChanged="ProviderEditorField_Changed"/>
+                            <TextBlock Text="{DynamicResource ProviderIdHint}" Foreground="{StaticResource MutedTextBrush}" FontSize="11" Margin="0,3,0,12" TextWrapping="Wrap"/>
+
+                            <!-- Display name -->
+                            <TextBlock Text="{DynamicResource ProviderDisplayNameLabel}" FontWeight="SemiBold" FontSize="12.5" Margin="0,0,0,3"/>
+                            <TextBox x:Name="ProvEditName" FontSize="13" TextChanged="ProviderEditorField_Changed" Margin="0,0,0,12"/>
+
+                            <!-- Base URL -->
+                            <TextBlock Text="{DynamicResource ProviderBaseUrlLabel}" FontWeight="SemiBold" FontSize="12.5" Margin="0,0,0,3"/>
+                            <TextBox x:Name="ProvEditBaseUrl" FontSize="13" TextChanged="ProviderEditorField_Changed" Margin="0,0,0,12"/>
+
+                            <!-- Auth scheme: advanced, default is x-api-key -->
+                            <Expander Header="{DynamicResource AdvancedAuthHeader}" FontSize="12.5" FontWeight="SemiBold" Foreground="{StaticResource MutedTextBrush}" Margin="0,0,0,12" IsExpanded="False">
+                                <StackPanel Margin="0,8,0,0">
+                                    <TextBlock Text="{DynamicResource ProviderAuthSchemeLabel}" FontWeight="SemiBold" FontSize="12.5" Margin="0,0,0,3"/>
+                                    <ComboBox x:Name="ProvEditAuthScheme" FontSize="13" SelectionChanged="ProviderEditorSelection_Changed">
+                                        <ComboBoxItem Content="{DynamicResource AuthSchemeXApiKey}" Tag="XApiKey"/>
+                                        <ComboBoxItem Content="{DynamicResource AuthSchemeBearer}" Tag="Bearer"/>
+                                    </ComboBox>
+                                    <TextBlock Text="{DynamicResource AdvancedAuthHint}" Foreground="{StaticResource MutedTextBrush}" FontSize="11" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Expander>
+
+                            <!-- API keys -->
+                            <Grid Margin="0,0,0,3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{DynamicResource ProviderApiKeysLabel}" FontWeight="SemiBold" FontSize="12.5" VerticalAlignment="Center"/>
+                                <Button x:Name="ProvEditAddKeys" Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="{DynamicResource ProviderAddKeysBtn}" Click="ProviderEditorAddKeys_Click" FontSize="11.5" Padding="10,5" MinHeight="28"/>
+                            </Grid>
+                            <TextBlock x:Name="ProvEditSavedKeysInfo" Foreground="{StaticResource MutedTextBrush}" FontSize="11.5" Margin="0,0,0,6"/>
+                            <TextBox x:Name="ProvEditApiKeys" FontSize="13" AcceptsReturn="True" TextWrapping="NoWrap" VerticalScrollBarVisibility="Auto" MinHeight="86" TextChanged="ProviderEditorField_Changed"/>
+                            <TextBlock Text="{DynamicResource ProviderApiKeysHint}" Foreground="{StaticResource MutedTextBrush}" FontSize="11" Margin="0,3,0,12" TextWrapping="Wrap"/>
+                            <ItemsControl x:Name="ProvEditSavedKeysList" Margin="0,0,0,14">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,0,0,6" Background="#FAFBFC">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <Grid Grid.Row="0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="138"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel>
+                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="12.5" Foreground="{StaticResource TextBrush}" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding Mask}" FontSize="12" Foreground="{StaticResource MutedTextBrush}" Margin="0,2,0,0"/>
+                                                    </StackPanel>
+                                                    <ComboBox Grid.Column="1"
+                                                              FontSize="11.5"
+                                                              ItemsSource="{Binding UsageModes}"
+                                                              DisplayMemberPath="Display"
+                                                              SelectedValuePath="Value"
+                                                              SelectedValue="{Binding UsageModeValue, Mode=OneWay}"
+                                                              SelectionChanged="ProviderKeyUsage_Changed"/>
+                                                </Grid>
+                                                <Grid Grid.Row="1" Margin="0,8,0,0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="{Binding Summary}" FontSize="11.5" Foreground="{StaticResource MutedTextBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                    <WrapPanel Grid.Column="1" HorizontalAlignment="Right" Margin="10,0,0,0">
+                                                        <Button Style="{StaticResource SecondaryButton}" Content="{DynamicResource EditSelected}" Tag="{Binding Id}" Click="ProviderKeyEdit_Click" FontSize="11.5" Padding="8,5" MinHeight="28" Margin="0,0,5,0"/>
+                                                        <Button Style="{StaticResource SecondaryButton}" Content="{Binding ToggleText}" Tag="{Binding Id}" Click="ProviderKeyToggle_Click" FontSize="11.5" Padding="8,5" MinHeight="28" Margin="0,0,5,0"/>
+                                                        <Button Style="{StaticResource SecondaryButton}" Content="&#x00D7;" ToolTip="{DynamicResource DeleteSelected}" Tag="{Binding Id}" Click="ProviderKeyDelete_Click" Width="30" MinHeight="28" FontSize="16" FontWeight="SemiBold" Foreground="#C53030" Padding="0"/>
+                                                    </WrapPanel>
+                                                </Grid>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- Default model -->
+                            <TextBlock Text="{DynamicResource ProviderDefaultModelLabel}" FontWeight="SemiBold" FontSize="12.5" Margin="0,0,0,3"/>
+                            <ComboBox x:Name="ProvEditDefaultModel" FontSize="13" IsEditable="True" Margin="0,0,0,2" SelectionChanged="ProviderEditorSelection_Changed"/>
+                            <TextBlock Text="{DynamicResource ProviderDefaultModelHint}" Foreground="{StaticResource MutedTextBrush}" FontSize="11" Margin="0,3,0,14" TextWrapping="Wrap"/>
+
+                            <!-- Models section -->
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <TextBlock Text="{DynamicResource ProviderModelsLabel}" FontWeight="SemiBold" FontSize="13.5" VerticalAlignment="Center"/>
+                                <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="{DynamicResource DiscoverModelsBtn}" Click="DiscoverModels_Click" FontSize="11.5" Padding="10,5" MinHeight="28" Margin="0,0,6,0"/>
+                                <Button Grid.Column="2" Style="{StaticResource SecondaryButton}" Content="{DynamicResource AddModelBtn}" Click="AddModelRow_Click" FontSize="11.5" Padding="10,5" MinHeight="28"/>
+                            </Grid>
+                            <ItemsControl x:Name="ProvEditModelsList" Margin="0,0,0,14">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,0,0,5">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="36"/></Grid.ColumnDefinitions>
+                                            <TextBox Grid.Column="0" Text="{Binding ModelId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="12" Margin="0,0,5,0" Tag="{DynamicResource ModelIdPlaceholder}"/>
+                                            <TextBox Grid.Column="1" Text="{Binding DisplayName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="12" Margin="0,0,5,0" Tag="{DynamicResource ModelDisplayNamePlaceholder}"/>
+                                            <Button Grid.Column="2" Content="&#x00D7;" ToolTip="{DynamicResource DeleteSelected}" Click="RemoveModelRow_Click" Width="32" MinHeight="30" FontSize="17" FontWeight="SemiBold" Foreground="#C53030" Padding="0"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- Optional headers (advanced) -->
+                            <Expander Header="{DynamicResource OptionalHeadersLabel}" FontWeight="SemiBold" FontSize="13" Margin="0,0,0,6" IsExpanded="False">
+                                <StackPanel Margin="0,8,0,0">
+                                    <TextBlock Text="{DynamicResource OptionalHeadersHint}" Foreground="{StaticResource MutedTextBrush}" FontSize="11" Margin="0,0,0,8" TextWrapping="Wrap"/>
+                                    <Button HorizontalAlignment="Left" Style="{StaticResource SecondaryButton}" Content="{DynamicResource AddHeaderBtn}" Click="AddHeaderRow_Click" FontSize="11.5" Padding="10,5" MinHeight="28" Margin="0,0,0,8"/>
+                                    <ItemsControl x:Name="ProvEditHeadersList">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="0,0,0,5">
+                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="36"/></Grid.ColumnDefinitions>
+                                                    <TextBox Grid.Column="0" Text="{Binding HeaderName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="12" Margin="0,0,5,0"/>
+                                                    <TextBox Grid.Column="1" Text="{Binding HeaderValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="12" Margin="0,0,5,0"/>
+                                                    <Button Grid.Column="2" Content="&#x00D7;" ToolTip="{DynamicResource DeleteSelected}" Click="RemoveHeaderRow_Click" Width="32" MinHeight="30" FontSize="17" FontWeight="SemiBold" Foreground="#C53030" Padding="0"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Expander>
+
+                            <!-- Inline validation error -->
+                            <TextBlock x:Name="ProvEditError" Foreground="#C53030" FontSize="12" TextWrapping="Wrap" Visibility="Collapsed" Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Footer actions -->
+                    <Border Grid.Row="2" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="24,14">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Style="{StaticResource SecondaryButton}" Content="{DynamicResource CancelBtn}" Click="ProviderEditorCancel_Click" Margin="0,0,10,0" Padding="18,9"/>
+                            <Button x:Name="ProvEditSave" Style="{StaticResource PrimaryButton}" Content="{DynamicResource SaveProviderBtn}" Click="ProviderEditorSave_Click" Padding="20,9" FontSize="13.5"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ═══ API KEY MODAL OVERLAY ═══ -->
+        <Grid x:Name="KeyEditorOverlay" Grid.Row="0" Grid.RowSpan="3" Visibility="Collapsed" Panel.ZIndex="100">
+            <!-- Semi-transparent backdrop -->
+            <Border Background="#88182430" MouseDown="KeyEditorBackdrop_Click"/>
+            <!-- Centered card -->
+            <Border Width="520" MaxHeight="700" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Background="{StaticResource PanelBrush}" CornerRadius="12"
+                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,20">
+                <Border.Effect><DropShadowEffect BlurRadius="24" ShadowDepth="3" Opacity="0.35" Color="#1A202C"/></Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Header -->
+                    <Grid Grid.Row="0" Margin="24,20,16,12">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <TextBlock x:Name="KeyEditTitle" Text="{DynamicResource KeyModalTitleAdd}" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <Button Grid.Column="1" Content="&#x00D7;" Click="KeyEditorCancel_Click" Width="32" Height="32" FontSize="14"
+                                Background="Transparent" BorderThickness="0" Foreground="{StaticResource MutedTextBrush}" Cursor="Hand"/>
+                    </Grid>
+
+                    <!-- Scrollable form -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="24,0,24,0">
+                        <StackPanel>
+                            <!-- Name -->
+                            <TextBlock Text="{DynamicResource KeyNameLabel}" FontWeight="SemiBold" FontSize="12.5" Margin="0,0,0,3"/>
+                            <TextBox x:Name="KeyEditName" FontSize="13" TextChanged="KeyEditorField_Changed" Margin="0,0,0,12"/>
+
+                            <!-- Provider -->
+                            <TextBlock Text="{DynamicResource KeyProviderLabel}" FontWeight="SemiBold" FontSize="12.5" Margin="0,0,0,3"/>
+                            <ComboBox x:Name="KeyEditProvider" FontSize="13" DisplayMemberPath="Name" SelectedValuePath="Id"
+                                      Margin="0,0,0,12" SelectionChanged="KeyEditorSelection_Changed"/>
+
+                            <!-- API key -->
+                            <TextBlock Text="{DynamicResource ProviderApiKeyLabel}" FontWeight="SemiBold" FontSize="12.5" Margin="0,0,0,3"/>
+                            <PasswordBox x:Name="KeyEditApiKey" FontSize="13" PasswordChanged="KeyEditorPassword_Changed"/>
+                            <TextBlock x:Name="KeyEditApiKeyHint" Text="{DynamicResource KeyApiKeyEditHint}" Foreground="{StaticResource MutedTextBrush}"
+                                       FontSize="11" Margin="0,3,0,12" TextWrapping="Wrap" Visibility="Collapsed"/>
+
+                            <!-- Usage mode -->
+                            <TextBlock Text="{DynamicResource KeyUsageModeLabel}" FontWeight="SemiBold" FontSize="12.5" Margin="0,2,0,3"/>
+                            <ComboBox x:Name="KeyEditUsageMode" FontSize="13" Margin="0,0,0,2" SelectionChanged="KeyEditorSelection_Changed">
+                                <ComboBoxItem Content="{DynamicResource KeyUsageAuto}" Tag="Auto"/>
+                                <ComboBoxItem Content="{DynamicResource KeyUsageFirst}" Tag="First"/>
+                                <ComboBoxItem Content="{DynamicResource KeyUsageReserve}" Tag="Reserve"/>
+                                <ComboBoxItem Content="{DynamicResource KeyUsageDisabled}" Tag="Disabled"/>
+                            </ComboBox>
+                            <TextBlock Text="{DynamicResource KeyUsageHint}" Foreground="{StaticResource MutedTextBrush}" FontSize="11" Margin="0,3,0,12" TextWrapping="Wrap"/>
+
+                            <!-- Advanced: raw routing -->
+                            <Expander x:Name="KeyEditAdvanced" Header="{DynamicResource KeyAdvancedToggle}" FontWeight="SemiBold" FontSize="12.5" Margin="0,0,0,6" IsExpanded="False">
+                                <StackPanel Margin="0,8,0,0">
+                                    <TextBlock Text="{DynamicResource KeyPriorityValueLabel}" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,3"/>
+                                    <TextBox x:Name="KeyEditPriority" FontSize="13" Text="100" TextChanged="KeyEditorPriority_Changed"/>
+                                    <TextBlock Text="{DynamicResource PriorityHelp}" Foreground="{StaticResource MutedTextBrush}" FontSize="11" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Expander>
+
+                            <!-- Inline validation error -->
+                            <TextBlock x:Name="KeyEditError" Foreground="#C53030" FontSize="12" TextWrapping="Wrap" Visibility="Collapsed" Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Footer actions -->
+                    <Border Grid.Row="2" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="24,14">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Style="{StaticResource SecondaryButton}" Content="{DynamicResource CancelBtn}" Click="KeyEditorCancel_Click" Margin="0,0,10,0" Padding="18,9"/>
+                            <Button x:Name="KeyEditSave" Style="{StaticResource PrimaryButton}" Content="{DynamicResource SaveKeyBtn}" Click="KeyEditorSave_Click" Padding="20,9" FontSize="13.5"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ═══ LAUNCH PRESET MODAL OVERLAY ═══ -->
+        <Grid x:Name="ProfileEditorOverlay" Grid.Row="0" Grid.RowSpan="3" Visibility="Collapsed" Panel.ZIndex="100">
+            <Border Background="#88182430" MouseDown="ProfileEditorBackdrop_Click"/>
+            <Border Width="560" MaxHeight="720" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Background="{StaticResource PanelBrush}" CornerRadius="12"
+                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,20">
+                <Border.Effect><DropShadowEffect BlurRadius="24" ShadowDepth="3" Opacity="0.35" Color="#1A202C"/></Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="24,20,16,12">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <TextBlock x:Name="ProfileEditTitle" Text="{DynamicResource ProfileEditorTitle}" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <Button Grid.Column="1" Content="&#x00D7;" Click="ProfileEditorCancel_Click" Width="32" Height="32" FontSize="14"
+                                Background="Transparent" BorderThickness="0" Foreground="{StaticResource MutedTextBrush}" Cursor="Hand"/>
+                    </Grid>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="24,0,24,0">
+                        <StackPanel>
+                            <TextBlock Text="{DynamicResource LaunchPresetIdLabel}" FontWeight="SemiBold" FontSize="12.5" Margin="0,0,0,3"/>
+                            <TextBox x:Name="ProfileEditId" FontSize="13" TextChanged="ProfileEditorField_Changed"/>
+                            <TextBlock Text="{DynamicResource LaunchPresetIdHint}" Foreground="{StaticResource MutedTextBrush}" FontSize="11" Margin="0,3,0,12" TextWrapping="Wrap"/>
+
+                            <TextBlock Text="{DynamicResource LaunchPresetNameLabel}" FontWeight="SemiBold" FontSize="12.5" Margin="0,0,0,3"/>
+                            <TextBox x:Name="ProfileEditName" FontSize="13" TextChanged="ProfileEditorField_Changed" Margin="0,0,0,12"/>
+
+                            <TextBlock Text="{DynamicResource LaunchPresetProvidersLabel}" FontWeight="SemiBold" FontSize="12.5" Margin="0,0,0,3"/>
+                            <TextBox x:Name="ProfileEditProviders" FontSize="13" TextChanged="ProfileEditorField_Changed"/>
+                            <TextBlock Text="{DynamicResource LaunchPresetProvidersHint}" Foreground="{StaticResource MutedTextBrush}" FontSize="11" Margin="0,3,0,12" TextWrapping="Wrap"/>
+
+                            <TextBlock Text="{DynamicResource LaunchPresetModelLabel}" FontWeight="SemiBold" FontSize="12.5" Margin="0,0,0,3"/>
+                            <TextBox x:Name="ProfileEditModel" FontSize="13" TextChanged="ProfileEditorField_Changed" Margin="0,0,0,12"/>
+
+                            <CheckBox x:Name="ProfileEditDefault" Content="{DynamicResource DefaultColumn}" Checked="ProfileEditorCheck_Changed" Unchecked="ProfileEditorCheck_Changed" Margin="0,0,0,12"/>
+
+                            <Expander Header="{DynamicResource AdvancedLaunchSettings}" FontWeight="SemiBold" FontSize="12.5" IsExpanded="False">
+                                <StackPanel Margin="0,8,0,0">
+                                    <TextBlock Text="{DynamicResource StrategyLabel}" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,3"/>
+                                    <ComboBox x:Name="ProfileEditStrategy" FontSize="13" Margin="0,0,0,12" SelectionChanged="ProfileEditorSelection_Changed">
+                                        <ComboBoxItem Content="{DynamicResource KeyUsageAuto}" Tag="automatic"/>
+                                        <ComboBoxItem Content="{DynamicResource StrategyLeastRecentlyUsed}" Tag="least_used_recently"/>
+                                        <ComboBoxItem Content="{DynamicResource StrategyPriorityOrder}" Tag="priority_order"/>
+                                        <ComboBoxItem Content="{DynamicResource StrategyRandom}" Tag="random"/>
+                                        <ComboBoxItem Content="{DynamicResource StrategyManualKey}" Tag="manual_key"/>
+                                        <ComboBoxItem Content="{DynamicResource StrategyProviderFallback}" Tag="provider_fallback"/>
+                                    </ComboBox>
+
+                                    <TextBlock Text="{DynamicResource ModelModeLabel}" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,3"/>
+                                    <ComboBox x:Name="ProfileEditModelMode" FontSize="13" Margin="0,0,0,12" SelectionChanged="ProfileEditorSelection_Changed">
+                                        <ComboBoxItem Content="{DynamicResource ModelModeRespectUser}" Tag="request_model"/>
+                                        <ComboBoxItem Content="{DynamicResource ModelModePreferProfile}" Tag="prefer_preset"/>
+                                        <ComboBoxItem Content="{DynamicResource ModelModeForceProfile}" Tag="force_preset"/>
+                                    </ComboBox>
+
+                                    <TextBlock Text="{DynamicResource AllowedKeysLabel}" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,3"/>
+                                    <TextBox x:Name="ProfileEditAllowedKeys" FontSize="13" TextChanged="ProfileEditorField_Changed"/>
+                                    <TextBlock Text="{DynamicResource LaunchPresetAllowedKeysHint}" Foreground="{StaticResource MutedTextBrush}" FontSize="11" Margin="0,3,0,12" TextWrapping="Wrap"/>
+
+                                    <TextBlock Text="{DynamicResource FallbackLabel}" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,3"/>
+                                    <TextBox x:Name="ProfileEditFallback" FontSize="13" TextChanged="ProfileEditorField_Changed" Margin="0,0,0,6"/>
+                                </StackPanel>
+                            </Expander>
+
+                            <TextBlock x:Name="ProfileEditError" Foreground="#C53030" FontSize="12" TextWrapping="Wrap" Visibility="Collapsed" Margin="0,10,0,0"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <Border Grid.Row="2" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="24,14">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Style="{StaticResource SecondaryButton}" Content="{DynamicResource CancelBtn}" Click="ProfileEditorCancel_Click" Margin="0,0,10,0" Padding="18,9"/>
+                            <Button x:Name="ProfileEditSave" Style="{StaticResource PrimaryButton}" Content="{DynamicResource SaveLaunchPresetBtn}" Click="ProfileEditorSave_Click" Padding="20,9" FontSize="13.5"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>ClaudeManager</AssemblyName>
+    <Product>Claude Manager</Product>
+    <Description>Local provider, key, quota and launch profile manager for Claude Code</Description>
+    <ApplicationIcon>..\..\assets\ClaudeManager.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AerolinkManager.Core\AerolinkManager.Core.csproj" />
+    <ProjectReference Include="..\ClaudeManager.Storage\ClaudeManager.Storage.csproj" />
+    <ProjectReference Include="..\AerolinkManager.Wrapper\AerolinkManager.Wrapper.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\logo.png" />
+  </ItemGroup>
+  <Target Name="CopyWrapper" AfterTargets="Build">
+    <ItemGroup>
+      <WrapperFiles Include="..\AerolinkManager.Wrapper\bin\$(Configuration)\net8.0-windows\ClaudeManager.Wrapper.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(WrapperFiles)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>
